@@ -180,7 +180,7 @@ button,select,input,summary{touch-action:manipulation}
   <ul class="notes">
     <li>Source: the bank's statement export for the café's Swish number. Only <b>incoming Swish payments dated 21 November 2026</b> are counted. Everything else on the account (earlier dates, outgoing payments) is left out.</li>
     <li>Swish was the only way to pay at the café, so these figures cover all sales.</li>
-    <li>Marcus's expenses come from one shopping receipt dated 20 November 2026, and only the items bought for the café are deducted. Expenses from other helpers (Ebba, Ana and Marit) are shown as reported. Items people donated are not counted as costs.</li>
+    <li>Marcus's expenses come from one shopping receipt dated 20 November 2026, and only the items bought for the café are deducted. Expenses from other helpers (Ebba, Ana, Marit and Una) are shown as reported. Items people donated are not counted as costs.</li>
     <li>The export has no time of day, so this page can't show which hour was busiest.</li>
     <li>"Payers" counts distinct Swish numbers. Families sharing one phone count as one payer.</li>
     <li>Privacy: payers are shown by first name only. Surnames are redacted, every second digit of phone numbers is redacted, and bank references and personal messages are left out. The redaction was done before the page was built, so the hidden parts are not in the page source either.</li>
@@ -202,7 +202,7 @@ const freq = {}; A.forEach(a=>freq[a]=(freq[a]||0)+1);
 const topAmts = Object.entries(freq).map(([a,c])=>[+a,c]).sort((x,y)=>y[1]-x[1]||x[0]-y[0]);
 
 document.getElementById('total').textContent = kr(TOTAL);
-const OTHER=[['Ebba',217],['Ana',350],['Marit',1044]], OTHT=OTHER.reduce((s,o)=>s+o[1],0);
+const OTHER=[['Ebba',217],['Ana',350],['Marit',1044],['Una',350]], OTHT=OTHER.reduce((s,o)=>s+o[1],0);
 const EXP = window.BAZAAR_EXP, EXPC = EXP.lines.filter(l=>l.cafe), EXPT = EXPC.reduce((s,l)=>s+l.amount,0);
 document.getElementById('calc').innerHTML =
  `<tr><td>Swish takings on bazaar day<span class="sm">${N} payments, from the bank statement · <a href="transactions.html">see all</a></span></td><td>${kr(TOTAL,2)}</td></tr>`+
