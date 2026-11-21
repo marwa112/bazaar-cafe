@@ -72,7 +72,11 @@ footer{margin-top:28px;font-size:13px;color:var(--muted)}
 .calct td:last-child{white-space:nowrap;vertical-align:bottom}
 .calct .sm{display:block;font-size:13px;color:var(--text2);font-weight:400}
 .calct tr.minus td:last-child{color:var(--text)}
+.calct tr.xfer td{font-weight:700;color:var(--text);font-size:18px;border-top:2px solid var(--text);background:var(--bg)}
+.calct tr.hd td{font-size:13px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;padding-top:16px;border-bottom:0}
+.calct tr.ind td:first-child{padding-left:20px}
 .calct tr.net td{font-size:clamp(20px,4vw,26px);font-weight:700;border-top:3px double var(--text);border-bottom:0}
+.calct tr.net .sm{font-size:13px}
 .calct a{color:var(--accent-strong);font-weight:600;text-decoration:none}
 .pieWrap{display:grid;grid-template-columns:minmax(0,340px) 1fr;gap:28px;align-items:center}
 @media (max-width:700px){.pieWrap{grid-template-columns:1fr}.pieBox{max-width:300px;margin:0 auto;width:100%}}
@@ -119,7 +123,7 @@ button,select,input,summary{touch-action:manipulation}
 <div class="hero"><span class="num" id="total"></span><span class="lbl">taken in through Swish</span></div>
 <section class="card calc" aria-labelledby="calcH">
   <h2 id="calcH">The bottom line</h2>
-  <p class="sub">What the café made after paying for what it bought.</p>
+  <p class="sub">From takings to profit: what was passed on, and what the café made after everyone's expenses.</p>
   <table class="calct" id="calc"></table>
 </section>
 <div class="kpis" id="kpis"></div>
@@ -176,7 +180,7 @@ button,select,input,summary{touch-action:manipulation}
   <ul class="notes">
     <li>Source: the bank's statement export for the café's Swish number. Only <b>incoming Swish payments dated 21 November 2026</b> are counted. Everything else on the account (earlier dates, outgoing payments) is left out.</li>
     <li>Swish was the only way to pay at the café, so these figures cover all sales.</li>
-    <li>Expenses come from one shopping receipt dated 20 November 2026. Only the items bought for the café are deducted. Other costs, such as items people donated, are not included.</li>
+    <li>Marcus's expenses come from one shopping receipt dated 20 November 2026, and only the items bought for the café are deducted. Expenses from other helpers (Ebba, Ana and Marit) are shown as reported. Items people donated are not counted as costs.</li>
     <li>The export has no time of day, so this page can't show which hour was busiest.</li>
     <li>"Payers" counts distinct Swish numbers. Families sharing one phone count as one payer.</li>
     <li>Privacy: payers are shown by first name only. Surnames are redacted, every second digit of phone numbers is redacted, and bank references and personal messages are left out. The redaction was done before the page was built, so the hidden parts are not in the page source either.</li>
@@ -198,11 +202,15 @@ const freq = {}; A.forEach(a=>freq[a]=(freq[a]||0)+1);
 const topAmts = Object.entries(freq).map(([a,c])=>[+a,c]).sort((x,y)=>y[1]-x[1]||x[0]-y[0]);
 
 document.getElementById('total').textContent = kr(TOTAL);
+const OTHER=[['Ebba',217],['Ana',350],['Marit',1044]], OTHT=OTHER.reduce((s,o)=>s+o[1],0);
 const EXP = window.BAZAAR_EXP, EXPC = EXP.lines.filter(l=>l.cafe), EXPT = EXPC.reduce((s,l)=>s+l.amount,0);
 document.getElementById('calc').innerHTML =
  `<tr><td>Swish takings on bazaar day<span class="sm">${N} payments, from the bank statement · <a href="transactions.html">see all</a></span></td><td>${kr(TOTAL,2)}</td></tr>`+
- `<tr class="minus"><td>Minus café expenses<span class="sm">${EXPC.length===EXP.lines.length?'Shopping receipt, 20 Nov':EXPC.map(l=>l.item.split(' ').slice(0,2).join(' ')+' '+kr(l.amount,2)).join(' + ')} · <a href="expenses.html">see receipt</a></span></td><td>− ${kr(EXPT,2)}</td></tr>`+
- `<tr class="net"><td>Net result for the café</td><td>${kr(TOTAL-EXPT,2)}</td></tr>`;
+ `<tr class="minus"><td>Minus Marcus's expenses<span class="sm">${EXPC.length===EXP.lines.length?'Shopping receipt, 20 Nov':EXPC.map(l=>l.item.split(' ').slice(0,2).join(' ')+' '+kr(l.amount,2)).join(' + ')} · <a href="expenses.html">see receipt</a></span></td><td>− ${kr(EXPT,2)}</td></tr>`+
+ `<tr class="xfer"><td>To transfer<span class="sm">Takings minus Marcus's expenses. This is the amount passed on.</span></td><td>${kr(TOTAL-EXPT,2)}</td></tr>`+
+ `<tr class="hd"><td colspan="2">Other helpers' expenses</td></tr>`+
+ OTHER.map(([n,a])=>`<tr class="minus ind"><td>Minus ${n}'s expenses</td><td>− ${kr(a,2)}</td></tr>`).join('')+
+ `<tr class="net"><td>Net profit<span class="sm">What the bazaar café made after all expenses (${kr(EXPT+OTHT,2)} in total)</span></td><td>${kr(TOTAL-EXPT-OTHT,2)}</td></tr>`;
 const kpis = [
   [N.toLocaleString('sv-SE'),'Payments','Swish payments received'],
   [kr(mean,0),'Average payment','total ÷ payments'],
