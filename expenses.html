@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Café Expenses</title>
+<meta name="description" content="The café's shopping receipt, with everything except the café items redacted.">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="data.js"></script>
+<style>
+:root{
+  color-scheme:light;
+  --bg:#f6f5f1; --surface:#fcfcfb; --border:#e4e2dc;
+  --text:#0b0b0b; --text2:#52514e; --muted:#7a7873; --grid:#ebe9e4;
+  --accent:#2a78d6; --accent-soft:#d6e6f8; --accent-strong:#1c5aa6; --warm:#eb6834;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#121211; --surface:#1a1a19; --border:#2e2d2b;
+    --text:#f0efec; --text2:#c3c2b7; --muted:#94938b; --grid:#2a2a28;
+    --accent:#3987e5; --accent-soft:#213650; --accent-strong:#7fb2f0; --warm:#d95926;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#121211; --surface:#1a1a19; --border:#2e2d2b;
+  --text:#f0efec; --text2:#c3c2b7; --muted:#94938b; --grid:#2a2a28;
+  --accent:#3987e5; --accent-soft:#213650; --accent-strong:#7fb2f0; --warm:#d95926;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.55 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+main{max-width:1040px;margin:0 auto;padding:40px 16px 64px}
+header .eyebrow{font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+h1{font-size:clamp(28px,5vw,40px);line-height:1.15;margin:6px 0 8px;letter-spacing:-.02em}
+.lede{color:var(--text2);max-width:640px;margin:0}
+.hero{margin:32px 0 16px;display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 16px}
+.hero .num{font-size:clamp(44px,9vw,72px);font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums;line-height:1}
+.hero .lbl{color:var(--text2)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:8px 0 40px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
+.kpi .v{font-size:26px;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.kpi .k{font-size:13px;color:var(--text2)}
+.kpi .s{font-size:12px;color:var(--muted);margin-top:2px}
+section.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px 20px;margin:0 0 20px}
+.card h2{font-size:19px;margin:0 0 4px;letter-spacing:-.01em}
+.card .sub{color:var(--text2);font-size:14px;margin:0 0 14px}
+.takeaway{font-size:15px;margin:0 0 14px;padding:10px 12px;border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 8px 8px 0}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;margin-bottom:10px}
+.seg{display:inline-flex;border:1px solid var(--border);border-radius:999px;padding:3px;background:var(--bg)}
+.seg button{font:inherit;font-size:13px;border:0;background:transparent;color:var(--text2);padding:5px 12px;border-radius:999px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--text);font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.chart{position:relative;height:300px}
+.detail{margin-top:12px;min-height:48px;font-size:14px;color:var(--text2);padding:10px 12px;border:1px dashed var(--border);border-radius:10px}
+.detail b{color:var(--text)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media (max-width:760px){.grid2{grid-template-columns:1fr}.chart{height:260px}}
+details{margin-top:12px;font-size:14px}
+summary{cursor:pointer;color:var(--accent-strong);font-weight:500}
+table{border-collapse:collapse;width:100%;margin-top:8px;font-variant-numeric:tabular-nums}
+th,td{text-align:right;padding:6px 8px;border-bottom:1px solid var(--border)}
+th:first-child,td:first-child{text-align:left}
+th{font-weight:600;color:var(--text2);font-size:13px}
+.notes{font-size:14px;color:var(--text2)}
+.notes li{margin:4px 0}
+footer{margin-top:28px;font-size:13px;color:var(--muted)}
+.navlink{margin:12px 0 0}.navlink a,.detail a{color:var(--accent-strong);font-weight:600;text-decoration:none}.navlink a:hover,.detail a:hover{text-decoration:underline}
+.mini{width:100%;margin-top:10px;font-size:14px}.mini td{padding:5px 8px}
+.rx{display:inline-block;background:#000;color:#fff;border-radius:2px;vertical-align:-2px;user-select:none}
+.rx.name{width:66px;height:15px;font-size:9px;line-height:15px;letter-spacing:.1em;text-align:center;font-weight:700;font-family:Inter,system-ui,sans-serif;margin-left:2px}
+.mini th:nth-child(2),.mini td:nth-child(2),.mini th:nth-child(3),.mini td:nth-child(3),#tx th:nth-child(2),#tx td:nth-child(2),#tx th:nth-child(3),#tx td:nth-child(3),#tx th:nth-child(4),#tx td:nth-child(4){text-align:left}
+.rx.dig{width:.62em;height:1.05em;margin:0 1px}
+:root[data-theme="dark"] .rx{outline:1px solid #555}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .rx{outline:1px solid #555}}
+.ph{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:nowrap}
+.theme{float:right;font:inherit;font-size:13px;background:var(--surface);color:var(--text2);border:1px solid var(--border);border-radius:999px;padding:5px 12px;cursor:pointer}
+</style>
+<style>
+.split{display:grid;grid-template-columns:minmax(0,300px) 1fr;gap:32px;align-items:start}
+@media (max-width:700px){.split{grid-template-columns:1fr}.rcpt{max-width:320px;margin:0 auto}}
+.rcpt{margin:0}.rcpt img{width:100%;height:auto;display:block;border:1px solid var(--border);border-radius:6px;background:#fff;padding:10px;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+.rcpt figcaption{font-size:13px;margin-top:8px;text-align:center}.rcpt a{color:var(--accent-strong);font-weight:600;text-decoration:none}
+#lines th:nth-child(2),#lines td:nth-child(2){text-align:left}
+.meta{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;font-size:14px;margin:0 0 18px}
+.meta dt{color:var(--text2)}.meta dd{margin:0}
+#lines td:nth-child(2),#lines th:nth-child(2),#lines td:nth-child(3),#lines th:nth-child(3){text-align:left}
+#lines tr.cafe td{font-weight:600}
+#lines tr.cafe td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
+.rx.item{width:150px;height:15px;font-size:9px;line-height:15px;letter-spacing:.1em;text-align:center;font-weight:700;font-family:Inter,system-ui,sans-serif}
+.pill{font-size:12px;border-radius:999px;padding:1px 8px;white-space:nowrap}
+.pill.yes{background:var(--accent-soft);color:var(--accent-strong);font-weight:600}
+.pill.no{color:var(--muted);border:1px solid var(--border)}
+.totals{margin-top:6px}.trow{display:flex;justify-content:space-between;gap:12px;padding:8px 8px;font-variant-numeric:tabular-nums}.trow span:last-child{white-space:nowrap}.trow.big{font-size:18px;font-weight:700;border-top:2px solid var(--text);margin-top:4px;padding-top:10px}
+.tot td{border-bottom:0;padding-top:10px}
+@media (max-width:600px){#lines tbody tr:not(.tot) td:nth-child(3),#lines th:nth-child(3){display:none}.rx.item{width:84px}#lines td,#lines th{padding:6px 4px}.pill{font-size:11px;padding:1px 6px}.lg{display:none}#lines tbody tr:not(.tot) td:nth-child(2){min-width:0}#lines .tot td:nth-child(2){white-space:normal}}
+#lines tbody td:last-child{white-space:nowrap}
+#lines .tot td.amt{text-align:right;white-space:nowrap}
+.tot.big td{font-size:18px;font-weight:700;border-top:2px solid var(--text)}
+.back{font-size:14px}.back a{color:var(--accent-strong);text-decoration:none;font-weight:600}
+.legend{display:flex;flex-wrap:wrap;gap:8px 20px;font-size:13px;color:var(--text2);padding:12px 14px;border:1px solid var(--border);border-radius:10px;background:var(--bg);margin:0 0 16px}
+.legend b{color:var(--text)}
+</style>
+</head>
+<body>
+<main>
+<button class="theme" id="themeBtn" type="button">Dark mode</button>
+<header>
+  <p class="back"><a href="index.html">← Back to the summary</a></p>
+  <div class="eyebrow">Christmas bazaar · 21 November 2026</div>
+  <h1>Café expenses</h1>
+  <p class="lede">The shopping receipt from 20 November 2026 at 16:22, with everything except the café items blacked out.</p>
+</header>
+<section class="card" style="margin-top:28px">
+  <div class="split">
+    <figure class="rcpt">
+      <a href="receipt-redacted.pdf" title="Open the redacted receipt as a PDF"><img src="receipt-redacted.png" alt="Shop receipt with everything blacked out except milk 75,60 kr, Earl Grey tea 21,67 kr, Blossa glögg 349,30 kr, and the date and time 2026-11-20 16:22." width="862" height="2200"></a>
+      <figcaption><a href="receipt-redacted.pdf">Download the redacted receipt (PDF)</a></figcaption>
+    </figure>
+    <div>
+      <h2>What was deducted</h2>
+      <p class="sub">Three items on this receipt were bought for the café. Everything else on it was personal shopping and is blacked out.</p>
+      <table id="lines"><thead><tr><th>Item</th><th>Quantity</th><th>Amount</th></tr></thead><tbody></tbody></table>
+      <div class="totals" id="totals"></div>
+    </div>
+  </div>
+</section>
+<footer><a href="index.html" style="color:inherit">Summary</a> · <a href="transactions.html" style="color:inherit">All payments</a> · Figures in Swedish kronor (kr).</footer>
+</main>
+<script>
+const E=window.BAZAAR_EXP;
+const kr=x=>x.toLocaleString('sv-SE',{minimumFractionDigits:2,maximumFractionDigits:2})+' kr';
+const RX=(c)=>`<span class="rx ${c}" role="img" aria-label="redacted" title="Redacted">REDACTED</span>`;
+const cafe=E.lines.reduce((s,l)=>s+l.amount,0);
+document.querySelector('#lines tbody').innerHTML=E.lines.map(l=>`<tr><td>${l.item}</td><td>${l.qty}</td><td>${kr(l.amount)}</td></tr>`).join('');
+document.getElementById('totals').innerHTML=`<div class="trow big"><span>Café expenses deducted</span><span>${kr(cafe)}</span></div>`;
+const btn=document.getElementById('themeBtn');
+function isDark(){ const t=document.documentElement.dataset.theme; return t? t==='dark' : matchMedia('(prefers-color-scheme: dark)').matches; }
+function label(){ btn.textContent = isDark()?'Light mode':'Dark mode'; }
+btn.addEventListener('click',()=>{ document.documentElement.dataset.theme = isDark()?'light':'dark'; try{localStorage.setItem('theme',document.documentElement.dataset.theme);}catch(e){} label(); });
+try{ const s=localStorage.getItem('theme'); if(s) document.documentElement.dataset.theme=s; }catch(e){}
+label();
+</script>
+</body>
+</html>

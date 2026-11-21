@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bazaar Café Takings</title>
+<meta name="description" content="What the class 7A + 7B café took in at the Christmas bazaar, 21 November 2026.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="data.js"></script>
+<style>
+:root{
+  color-scheme:light;
+  --bg:#f6f5f1; --surface:#fcfcfb; --border:#e4e2dc;
+  --text:#0b0b0b; --text2:#52514e; --muted:#7a7873; --grid:#ebe9e4;
+  --accent:#2a78d6; --accent-soft:#d6e6f8; --accent-strong:#1c5aa6; --warm:#eb6834;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#121211; --surface:#1a1a19; --border:#2e2d2b;
+    --text:#f0efec; --text2:#c3c2b7; --muted:#94938b; --grid:#2a2a28;
+    --accent:#3987e5; --accent-soft:#213650; --accent-strong:#7fb2f0; --warm:#d95926;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#121211; --surface:#1a1a19; --border:#2e2d2b;
+  --text:#f0efec; --text2:#c3c2b7; --muted:#94938b; --grid:#2a2a28;
+  --accent:#3987e5; --accent-soft:#213650; --accent-strong:#7fb2f0; --warm:#d95926;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.55 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+main{max-width:1040px;margin:0 auto;padding:40px 16px 64px}
+header .eyebrow{font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+h1{font-size:clamp(28px,5vw,40px);line-height:1.15;margin:6px 0 8px;letter-spacing:-.02em}
+.lede{color:var(--text2);max-width:640px;margin:0}
+.hero{margin:32px 0 16px;display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 16px}
+.hero .num{font-size:clamp(44px,9vw,72px);font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums;line-height:1}
+.hero .lbl{color:var(--text2)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:8px 0 40px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
+.kpi .v{font-size:26px;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.kpi .k{font-size:13px;color:var(--text2)}
+.kpi .s{font-size:12px;color:var(--muted);margin-top:2px}
+section.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px 20px;margin:0 0 20px}
+.card h2{font-size:19px;margin:0 0 4px;letter-spacing:-.01em}
+.card .sub{color:var(--text2);font-size:14px;margin:0 0 14px}
+.takeaway{font-size:15px;margin:0 0 14px;padding:10px 12px;border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 8px 8px 0}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;margin-bottom:10px}
+.seg{display:inline-flex;border:1px solid var(--border);border-radius:999px;padding:3px;background:var(--bg)}
+.seg button{font:inherit;font-size:13px;border:0;background:transparent;color:var(--text2);padding:5px 12px;border-radius:999px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--text);font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.chart{position:relative;height:300px}
+.detail{margin-top:12px;min-height:48px;font-size:14px;color:var(--text2);padding:10px 12px;border:1px dashed var(--border);border-radius:10px}
+.detail b{color:var(--text)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media (max-width:760px){.grid2{grid-template-columns:1fr}.chart{height:260px}}
+details{margin-top:12px;font-size:14px}
+summary{cursor:pointer;color:var(--accent-strong);font-weight:500}
+table{border-collapse:collapse;width:100%;margin-top:8px;font-variant-numeric:tabular-nums}
+th,td{text-align:right;padding:6px 8px;border-bottom:1px solid var(--border)}
+th:first-child,td:first-child{text-align:left}
+th{font-weight:600;color:var(--text2);font-size:13px}
+.notes{font-size:14px;color:var(--text2)}
+.notes li{margin:4px 0}
+footer{margin-top:28px;font-size:13px;color:var(--muted)}
+.calc{border-color:var(--accent);margin-top:8px}
+.calct{max-width:620px;margin-top:4px;font-size:16px}
+.calct td{padding:10px 8px}
+.calct td:last-child{white-space:nowrap;vertical-align:bottom}
+.calct .sm{display:block;font-size:13px;color:var(--text2);font-weight:400}
+.calct tr.minus td:last-child{color:var(--text)}
+.calct tr.net td{font-size:clamp(20px,4vw,26px);font-weight:700;border-top:3px double var(--text);border-bottom:0}
+.calct a{color:var(--accent-strong);font-weight:600;text-decoration:none}
+.pieWrap{display:grid;grid-template-columns:minmax(0,340px) 1fr;gap:28px;align-items:center}
+@media (max-width:700px){.pieWrap{grid-template-columns:1fr}.pieBox{max-width:300px;margin:0 auto}}
+.pieBox{position:relative;aspect-ratio:1}
+.pieCenter{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;pointer-events:none;padding:27%}
+.pieCenter .pv{font-size:clamp(22px,5vw,30px);font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.02em;line-height:1.1}
+.pieCenter .pl{font-size:13px;color:var(--text2);margin-top:4px}
+.pieCenter .ps{font-size:12px;color:var(--muted);margin-top:2px}
+.pieCenter.pop .pv{animation:pop .35s ease}
+@keyframes pop{0%{transform:scale(.85);opacity:.3}60%{transform:scale(1.06)}100%{transform:scale(1);opacity:1}}
+.pieLegend{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.pieLegend li{display:grid;grid-template-columns:14px 1fr auto;gap:10px;align-items:center;padding:9px 12px;border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:background .2s,border-color .2s,opacity .2s,transform .2s}
+.pieLegend li:hover,.pieLegend li.on{border-color:var(--text2);background:var(--bg);transform:translateX(4px)}
+.pieLegend.has li:not(.on){opacity:.45}
+.pieLegend .sw{width:14px;height:14px;border-radius:4px}
+.pieLegend .nm{font-size:14px}.pieLegend .nm small{display:block;color:var(--muted);font-size:12px}
+.pieLegend .vl{font-weight:600;font-variant-numeric:tabular-nums;text-align:right}.pieLegend .vl small{display:block;color:var(--text2);font-weight:400;font-size:12px}
+@media (prefers-reduced-motion: reduce){.pieCenter.pop .pv{animation:none}.pieLegend li{transition:none}}
+.navlink{margin:12px 0 0}.navlink a,.detail a{color:var(--accent-strong);font-weight:600;text-decoration:none}.navlink a:hover,.detail a:hover{text-decoration:underline}
+.mini{width:100%;margin-top:10px;font-size:14px}.mini td{padding:5px 8px}
+.rx{display:inline-block;background:#000;color:#fff;border-radius:2px;vertical-align:-2px;user-select:none}
+.rx.name{width:66px;height:15px;font-size:9px;line-height:15px;letter-spacing:.1em;text-align:center;font-weight:700;font-family:Inter,system-ui,sans-serif;margin-left:2px}
+.mini th:nth-child(2),.mini td:nth-child(2),.mini th:nth-child(3),.mini td:nth-child(3),#tx th:nth-child(2),#tx td:nth-child(2),#tx th:nth-child(3),#tx td:nth-child(3),#tx th:nth-child(4),#tx td:nth-child(4){text-align:left}
+.rx.dig{width:.62em;height:1.05em;margin:0 1px}
+:root[data-theme="dark"] .rx{outline:1px solid #555}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .rx{outline:1px solid #555}}
+.ph{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:nowrap}
+.theme{float:right;font:inherit;font-size:13px;background:var(--surface);color:var(--text2);border:1px solid var(--border);border-radius:999px;padding:5px 12px;cursor:pointer}
+</style>
+</head>
+<body>
+<main>
+<button class="theme" id="themeBtn" type="button">Dark mode</button>
+<header>
+  <div class="eyebrow">Christmas bazaar · 21 November 2026</div>
+  <h1>Café takings, class 7A + 7B</h1>
+  <p class="lede">A look at every Swish payment the café received on bazaar day: how much came in, how big a typical purchase was, and where the money came from. Click any bar to see the payments behind it.</p>
+  <p class="navlink"><a href="transactions.html">See all 573 payments →</a> &nbsp;·&nbsp; <a href="expenses.html">See the expenses →</a></p>
+</header>
+
+<div class="hero"><span class="num" id="total"></span><span class="lbl">taken in through Swish</span></div>
+<section class="card calc" aria-labelledby="calcH">
+  <h2 id="calcH">The bottom line</h2>
+  <p class="sub">What the café made after paying for what it bought.</p>
+  <table class="calct" id="calc"></table>
+</section>
+<div class="kpis" id="kpis"></div>
+
+<section class="card" id="pieCard">
+  <h2>Which purchases brought in the money?</h2>
+  <p class="sub">Share of the takings by purchase size. Hover over a slice, or click it to pull it out and see the details.</p>
+  <div class="pieWrap">
+    <div class="pieBox">
+      <canvas id="pie" aria-label="Share of takings by purchase size"></canvas>
+      <div class="pieCenter" aria-live="polite"><div class="pv" id="pieVal"></div><div class="pl" id="pieLbl"></div><div class="ps" id="pieSub"></div></div>
+    </div>
+    <ul class="pieLegend" id="pieLegend"></ul>
+  </div>
+</section>
+
+<section class="card">
+  <div class="row">
+    <div><h2>How big were the purchases?</h2><p class="sub" id="bandsSub">Payments grouped by size.</p></div>
+    <div class="seg" role="group" aria-label="Measure">
+      <button type="button" data-m="count" aria-pressed="true">Number of payments</button>
+      <button type="button" data-m="sum" aria-pressed="false">Kronor taken</button>
+    </div>
+  </div>
+  <p class="takeaway" id="bandsTake"></p>
+  <div class="chart"><canvas id="bands" aria-label="Payments by size band"></canvas></div>
+  <div class="detail" id="bandsDetail">Click a bar to see how many payments fell in that band and what share of the takings they brought.</div>
+  <details><summary>Show as table</summary><table id="bandsTable"></table></details>
+</section>
+
+<div class="grid2">
+<section class="card">
+  <h2>The most common amounts</h2>
+  <p class="sub">Exact amounts paid, top 12. Round numbers dominate.</p>
+  <div class="chart"><canvas id="prices" aria-label="Most common payment amounts"></canvas></div>
+  <div class="detail" id="pricesDetail">Click a bar for details.</div>
+</section>
+<section class="card">
+  <h2>Where the money came from</h2>
+  <p class="sub">Payments sorted from largest to smallest, and the running share of takings they add up to.</p>
+  <div class="chart"><canvas id="conc" aria-label="Cumulative share of takings"></canvas></div>
+  <div class="detail" id="concDetail"></div>
+</section>
+</div>
+
+<section class="card">
+  <h2>What people wrote in their Swish note</h2>
+  <p class="sub" id="msgSub"></p>
+  <div class="chart" style="height:220px"><canvas id="msgs" aria-label="Items mentioned in Swish notes"></canvas></div>
+</section>
+
+<section class="card">
+  <h2>How these numbers were made</h2>
+  <ul class="notes">
+    <li>Source: the bank's statement export for the café's Swish number. Only <b>incoming Swish payments dated 21 November 2026</b> are counted. Everything else on the account (earlier dates, outgoing payments) is left out.</li>
+    <li>Swish was the only way to pay at the café, so these figures cover all sales.</li>
+    <li>Expenses come from one shopping receipt dated 20 November 2026. Only the items bought for the café are deducted. Other costs, such as items people donated, are not included.</li>
+    <li>The export has no time of day, so this page can't show which hour was busiest.</li>
+    <li>"Payers" counts distinct Swish numbers. Families sharing one phone count as one payer.</li>
+    <li>Privacy: payers are shown by first name only. Surnames are redacted, every second digit of phone numbers is redacted, and bank references and personal messages are left out. The redaction was done before the page was built, so the hidden parts are not in the page source either.</li>
+  </ul>
+</section>
+<footer><a href="transactions.html" style="color:inherit">All payments</a> · <a href="expenses.html" style="color:inherit">Expenses</a> · Figures in Swedish kronor (kr). Built from the statement export of 21 November 2026.</footer>
+</main>
+
+<script>
+const DATA = window.BAZAAR;
+const TX = DATA.tx;
+const A = TX.map(t=>t[1]).sort((a,b)=>a-b);
+const N = A.length, TOTAL = A.reduce((s,x)=>s+x,0);
+const kr = (x,d=0)=> x.toLocaleString('sv-SE',{minimumFractionDigits:d,maximumFractionDigits:d})+' kr';
+const pct = x => (x*100).toLocaleString('en-GB',{maximumFractionDigits:0})+'%';
+const q = p => { const i=(N-1)*p, lo=Math.floor(i), hi=Math.ceil(i); return A[lo]+(A[hi]-A[lo])*(i-lo); };
+const median = q(.5), mean = TOTAL/N;
+const freq = {}; A.forEach(a=>freq[a]=(freq[a]||0)+1);
+const topAmts = Object.entries(freq).map(([a,c])=>[+a,c]).sort((x,y)=>y[1]-x[1]||x[0]-y[0]);
+
+document.getElementById('total').textContent = kr(TOTAL);
+const EXP = window.BAZAAR_EXP, EXPC = EXP.lines.filter(l=>l.cafe), EXPT = EXPC.reduce((s,l)=>s+l.amount,0);
+document.getElementById('calc').innerHTML =
+ `<tr><td>Swish takings on bazaar day<span class="sm">${N} payments, from the bank statement · <a href="transactions.html">see all</a></span></td><td>${kr(TOTAL,2)}</td></tr>`+
+ `<tr class="minus"><td>Minus café expenses<span class="sm">${EXPC.length===EXP.lines.length?'Shopping receipt, 20 Nov':EXPC.map(l=>l.item.split(' ').slice(0,2).join(' ')+' '+kr(l.amount,2)).join(' + ')} · <a href="expenses.html">see receipt</a></span></td><td>− ${kr(EXPT,2)}</td></tr>`+
+ `<tr class="net"><td>Net result for the café</td><td>${kr(TOTAL-EXPT,2)}</td></tr>`;
+const kpis = [
+  [N.toLocaleString('sv-SE'),'Payments','Swish payments received'],
+  [kr(mean,0),'Average payment','total ÷ payments'],
+  [kr(median),'Median payment','half paid less, half more'],
+  [kr(topAmts[0][0]),'Most common amount',topAmts[0][1]+' payments ('+pct(topAmts[0][1]/N)+')'],
+  [DATA.payers.toLocaleString('sv-SE'),'Different payers',DATA.repeat+' came back more than once'],
+  [q(.25)+'–'+kr(q(.75)),'Middle half paid','typical range'],
+];
+document.getElementById('kpis').innerHTML = kpis.map(([v,k,s])=>`<div class="kpi"><div class="v">${v}</div><div class="k">${k}</div><div class="s">${s}</div></div>`).join('');
+
+// size bands
+const BANDS=[[0,10,'Under 10'],[10,20,'10–19'],[20,30,'20–29'],[30,40,'30–39'],[40,50,'40–49'],[50,75,'50–74'],[75,100,'75–99'],[100,150,'100–149'],[150,Infinity,'150+']];
+const bands = BANDS.map(([lo,hi,l])=>{ const xs=A.filter(a=>a>=lo&&a<hi); return {l,count:xs.length,sum:xs.reduce((s,x)=>s+x,0)}; });
+const small = A.filter(a=>a<50), big = A.filter(a=>a>=50);
+document.getElementById('bandsTake').innerHTML = `<b>${pct(small.length/N)}</b> of payments were under 50 kr, but the <b>${pct(big.length/N)}</b> that were 50 kr or more brought in <b>${pct(big.reduce((s,x)=>s+x,0)/TOTAL)}</b> of the money.`;
+document.getElementById('bandsTable').innerHTML = '<tr><th>Size (kr)</th><th>Payments</th><th>% of payments</th><th>Kronor</th><th>% of takings</th></tr>' +
+  bands.map(b=>`<tr><td>${b.l}</td><td>${b.count}</td><td>${pct(b.count/N)}</td><td>${kr(b.sum)}</td><td>${pct(b.sum/TOTAL)}</td></tr>`).join('') +
+  `<tr><td><b>Total</b></td><td><b>${N}</b></td><td>100%</td><td><b>${kr(TOTAL)}</b></td><td>100%</td></tr>`;
+
+// concentration
+const desc = A.slice().sort((a,b)=>b-a); let run=0;
+const curve = desc.map((a,i)=>{run+=a; return {x:(i+1)/N*100, y:run/TOTAL*100};});
+const at = p => curve[Math.max(0,Math.round(N*p)-1)].y/100;
+const half = curve.findIndex(c=>c.y>=50)+1;
+document.getElementById('concDetail').innerHTML = `The biggest <b>20%</b> of payments brought in <b>${pct(at(.2))}</b> of the takings. Half the money came from the largest <b>${half}</b> payments (${pct(half/N)} of all payments).`;
+
+// messages
+const mentions = DATA.mentions;
+document.getElementById('msgSub').textContent = `Only ${DATA.withMsg} of ${N} payers (${pct(DATA.withMsg/N)}) added a note, so treat this as a small sample. Notes that named an item, grouped:`;
+
+// charts
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+let charts = [];
+let metric='count';
+function theme(){ return {text:css('--text'),text2:css('--text2'),grid:css('--grid'),accent:css('--accent'),soft:css('--accent-soft'),warm:css('--warm'),surface:css('--surface'),border:css('--border')}; }
+function base(t,ytitle,yfmt){ return {
+  responsive:true,maintainAspectRatio:false,animation:{duration:300},transitions:{resize:{animation:{duration:0}}},
+  plugins:{legend:{display:false},tooltip:{backgroundColor:t.surface,titleColor:t.text,bodyColor:t.text2,borderColor:t.border,borderWidth:1,padding:10,displayColors:false}},
+  scales:{x:{grid:{display:false},ticks:{color:t.text2},border:{color:t.border}},
+          y:{grid:{color:t.grid},border:{display:false},ticks:{color:t.text2,callback:yfmt},title:{display:!!ytitle,text:ytitle,color:t.text2}}},
+  onHover:(e,els)=>{e.native.target.style.cursor=els.length?'pointer':'default';}
+};}
+const barStyle = {borderRadius:{topLeft:4,topRight:4},borderSkipped:'bottom',maxBarThickness:48,categoryPercentage:.85,barPercentage:.92};
+let sel={bands:-1,prices:-1};
+function colors(n,i,t){ return Array.from({length:n},(_,k)=> i<0||k===i ? t.accent : t.soft); }
+
+// pie: share of takings by purchase size
+const PIE=[[0,20,'Small','under 20 kr'],[20,40,'Medium','20–39 kr'],[40,75,'Large','40–74 kr'],[75,Infinity,'Big spenders','75 kr and up']].map(([lo,hi,n,r])=>{const xs=A.filter(a=>a>=lo&&a<hi);return {n,r,count:xs.length,sum:xs.reduce((s,x)=>s+x,0)};});
+const PIE_LIGHT=['#2a78d6','#eb6834','#1baf7a','#eda100'], PIE_DARK=['#3987e5','#d95926','#199e70','#c98500'];
+let pieSel=-1, pieChart=null, countAnim=null, pieCols=[];
+function countTo(el,to,fmt){ cancelAnimationFrame(countAnim); const from=parseFloat(el.dataset.v||0), t0=performance.now(), d=matchMedia('(prefers-reduced-motion: reduce)').matches?0:550;
+  const step=now=>{const k=d?Math.min(1,(now-t0)/d):1, e=1-Math.pow(1-k,3), v=from+(to-from)*e; el.textContent=fmt(v); if(k<1) countAnim=requestAnimationFrame(step); else el.dataset.v=to;}; countAnim=requestAnimationFrame(step); }
+function pieShow(i){
+  const c=document.querySelector('.pieCenter'), v=document.getElementById('pieVal');
+  c.classList.remove('pop'); void c.offsetWidth; c.classList.add('pop');
+  if(i<0){ countTo(v,TOTAL,x=>kr(x)); document.getElementById('pieLbl').textContent='total takings'; document.getElementById('pieSub').textContent=`${N} payments`; }
+  else { const s=PIE[i]; countTo(v,s.sum/TOTAL*100,x=>Math.round(x)+'%'); document.getElementById('pieLbl').textContent=s.n; document.getElementById('pieSub').textContent=`${kr(s.sum)} · ${s.count} payments`; }
+  document.querySelectorAll('#pieLegend li').forEach((li,k)=>li.classList.toggle('on',k===i));
+  document.getElementById('pieLegend').classList.toggle('has',i>=0);
+}
+function pieSelect(i){
+  pieSel = pieSel===i ? -1 : i;
+  const ds=pieChart.data.datasets[0];
+  ds.offset=PIE.map((_,k)=>k===pieSel?26:0);
+  ds.backgroundColor=pieCols.map((c,k)=>pieSel<0||k===pieSel?c:c+'55');
+  pieChart.update(); pieShow(pieSel);
+}
+function buildPie(t){
+  const cols=isDark()?PIE_DARK:PIE_LIGHT; pieCols=cols;
+  document.getElementById('pieLegend').innerHTML=PIE.map((s,i)=>`<li data-i="${i}" tabindex="0" role="button"><span class="sw" style="background:${cols[i]}"></span><span class="nm">${s.n}<small>${s.r} · ${s.count} payments</small></span><span class="vl">${pct(s.sum/TOTAL)}<small>${kr(s.sum)}</small></span></li>`).join('');
+  pieChart=new Chart(document.getElementById('pie'),{type:'doughnut',
+    data:{labels:PIE.map(s=>s.n),datasets:[{data:PIE.map(s=>s.sum),backgroundColor:cols.map((c,k)=>pieSel<0||k===pieSel?c:c+'55'),borderColor:t.surface,borderWidth:3,hoverOffset:14,offset:PIE.map((_,k)=>k===pieSel?26:0),borderRadius:6}]},
+    options:{cutout:'62%',layout:{padding:28},maintainAspectRatio:false,
+      animation:{animateRotate:true,animateScale:true,duration:matchMedia('(prefers-reduced-motion: reduce)').matches?0:1100,easing:'easeOutQuart'},
+      transitions:{active:{animation:{duration:250}}},
+      plugins:{legend:{display:false},tooltip:{enabled:false}},
+      onHover:(e,els)=>{e.native.target.style.cursor=els.length?'pointer':'default'; if(pieSel<0){ const i=els.length?els[0].index:-1; if(i!==pieChart._hov){pieChart._hov=i; pieShow(i);} } },
+      onClick:(e,els)=>{ if(els.length) pieSelect(els[0].index); else if(pieSel>=0) pieSelect(pieSel); }
+    }});
+  pieChart._hov=-2;
+  document.getElementById('pie').addEventListener('mouseleave',()=>{ if(pieSel<0){pieChart._hov=-2; pieShow(-1);} });
+  document.querySelectorAll('#pieLegend li').forEach(li=>{
+    const i=+li.dataset.i;
+    li.addEventListener('click',()=>pieSelect(i));
+    li.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pieSelect(i);}});
+    li.addEventListener('mouseenter',()=>{ if(pieSel<0){ pieChart.setActiveElements([{datasetIndex:0,index:i}]); pieChart.update(); pieShow(i);} });
+    li.addEventListener('mouseleave',()=>{ if(pieSel<0){ pieChart.setActiveElements([]); pieChart.update(); pieShow(-1);} });
+  });
+  pieShow(pieSel);
+}
+function build(){
+  charts.forEach(c=>c.destroy()); charts=[];
+  const t=theme();
+  buildPie(t);
+  Chart.defaults.font.family='Inter, system-ui, sans-serif';
+  // bands
+  const bv = bands.map(b=>b[metric]);
+  const bo = base(t, metric==='count'?'Payments':'Kronor', v=> metric==='count'? v : v.toLocaleString('sv-SE'));
+  bo.plugins.tooltip.callbacks={title:i=>i[0].label+' kr',label:i=>{const b=bands[i.dataIndex];return [`${b.count} payments (${pct(b.count/N)})`,`${kr(b.sum)} (${pct(b.sum/TOTAL)} of takings)`];}};
+  bo.scales.x.title={display:true,text:'Payment size (kr)',color:t.text2};
+  bo.onClick=(e,els)=>{ if(!els.length) return; sel.bands = sel.bands===els[0].index?-1:els[0].index; showBand(); recolor(charts[0],sel.bands); };
+  charts.push(new Chart(document.getElementById('bands'),{type:'bar',data:{labels:bands.map(b=>b.l),datasets:[{data:bv,backgroundColor:colors(bands.length,sel.bands,t),...barStyle}]},options:bo}));
+  // prices
+  const tp = topAmts.slice(0,12).sort((a,b)=>a[0]-b[0]);
+  const po = base(t,'Payments',v=>v);
+  po.plugins.tooltip.callbacks={title:i=>kr(tp[i[0].dataIndex][0]),label:i=>`${tp[i.dataIndex][1]} payments`};
+  po.onClick=(e,els)=>{ if(!els.length) return; const k=els[0].index; sel.prices = sel.prices===k?-1:k; showPrice(tp); recolor(charts[1],sel.prices); };
+  charts.push(new Chart(document.getElementById('prices'),{type:'bar',data:{labels:tp.map(p=>p[0]),datasets:[{data:tp.map(p=>p[1]),backgroundColor:colors(tp.length,sel.prices,t),...barStyle}]},options:po}));
+  // concentration
+  const co = base(t,'% of takings',v=>v+'%');
+  co.scales.x={type:'linear',min:0,max:100,grid:{color:t.grid},border:{color:t.border},ticks:{color:t.text2,callback:v=>v+'%'},title:{display:true,text:'% of payments, largest first',color:t.text2}};
+  co.scales.y.min=0; co.scales.y.max=100;
+  co.interaction={mode:'index',intersect:false};
+  co.plugins.tooltip.callbacks={title:i=>`Largest ${Math.round(i[0].parsed.x)}% of payments`,label:i=>`brought in ${Math.round(i.parsed.y)}% of takings`};
+  charts.push(new Chart(document.getElementById('conc'),{type:'line',data:{datasets:[
+    {data:curve,borderColor:t.accent,borderWidth:2,pointRadius:0,pointHoverRadius:5,pointHoverBackgroundColor:t.accent,fill:{target:'origin'},backgroundColor:t.soft,tension:0},
+    {data:[{x:0,y:0},{x:100,y:100}],borderColor:t.text2,borderWidth:1,borderDash:[4,4],pointRadius:0,pointHoverRadius:0,label:'equal'}
+  ]},options:{...co,plugins:{...co.plugins,tooltip:{...co.plugins.tooltip,filter:i=>i.datasetIndex===0}}}}));
+  // messages
+  const mo = base(t,'',v=>v);
+  mo.indexAxis='y';
+  mo.scales={x:{grid:{color:t.grid},border:{display:false},ticks:{color:t.text2,precision:0},title:{display:true,text:'Notes mentioning it',color:t.text2}},y:{grid:{display:false},ticks:{color:t.text},border:{color:t.border}}};
+  mo.plugins.tooltip.callbacks={label:i=>`${i.parsed.x} notes`};
+  charts.push(new Chart(document.getElementById('msgs'),{type:'bar',data:{labels:mentions.map(m=>m[0]),datasets:[{data:mentions.map(m=>m[1]),backgroundColor:t.accent,borderRadius:{topRight:4,bottomRight:4},borderSkipped:'left',maxBarThickness:22}]},options:mo}));
+}
+const RX_NAME='<span class="rx name" role="img" aria-label="surname redacted" title="Surname redacted">REDACTED</span>';
+function phoneHTML(p){ const s=[...p].map(c=> c==='#' ? '<span class="rx dig" role="img" aria-label="digit redacted" title="Digit redacted"></span>' : c); return '<span class="ph">'+s.slice(0,3).join('')+'-'+s.slice(3,6).join('')+' '+s.slice(6,8).join('')+' '+s.slice(8).join('')+'</span>'; }
+function payerHTML(t){ return t[2]+' '+RX_NAME; }
+function miniList(rows,link){
+  const shown=rows.slice().sort((a,b)=>b[1]-a[1]||a[0]-b[0]).slice(0,6);
+  return '<table class="mini"><tr><th>#</th><th>Payer</th><th>Phone</th><th>Amount</th></tr>'+shown.map(t=>`<tr><td>${t[0]}</td><td>${payerHTML(t)}</td><td>${phoneHTML(t[3])}</td><td>${kr(t[1],t[1]%1?2:0)}</td></tr>`).join('')+'</table>'+
+    `<p style="margin:8px 0 0">${rows.length>shown.length?`Showing the ${shown.length} largest of ${rows.length}. `:''}<a href="${link}">See all ${rows.length} payments in this group →</a></p>`;
+}
+function recolor(c,i){ const t=theme(); c.data.datasets[0].backgroundColor=colors(c.data.labels.length,i,t); c.update('none'); }
+function showBand(){
+  const d=document.getElementById('bandsDetail');
+  if(sel.bands<0){ d.innerHTML='Click a bar to see how many payments fell in that band and what share of the takings they brought.'; return; }
+  const b=bands[sel.bands];
+  d.innerHTML=`<b>${b.l} kr:</b> ${b.count} payments, which is <b>${pct(b.count/N)}</b> of all payments. Together they brought in <b>${kr(b.sum)}</b>, or <b>${pct(b.sum/TOTAL)}</b> of the takings. Average in this band: ${b.count?kr(b.sum/b.count):'–'}.`+miniList(TX.filter(t=>t[1]>=BANDS[sel.bands][0]&&t[1]<BANDS[sel.bands][1]),`transactions.html?band=${sel.bands}`);
+}
+function showPrice(tp){
+  const d=document.getElementById('pricesDetail');
+  if(sel.prices<0){ d.textContent='Click a bar for details.'; return; }
+  const [a,c]=tp[sel.prices];
+  d.innerHTML=`<b>${kr(a)}</b> was paid <b>${c}</b> times (${pct(c/N)} of payments), adding up to <b>${kr(a*c)}</b> (${pct(a*c/TOTAL)} of takings).`+miniList(TX.filter(t=>t[1]===a),`transactions.html?amount=${a}`);
+}
+document.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',()=>{
+  metric=b.dataset.m; document.querySelectorAll('.seg button').forEach(x=>x.setAttribute('aria-pressed',x===b));
+  document.getElementById('bandsSub').textContent = metric==='count'?'Payments grouped by size.':'Kronor taken, by size of payment.';
+  build();
+}));
+// theme toggle
+const btn=document.getElementById('themeBtn');
+function isDark(){ const t=document.documentElement.dataset.theme; return t? t==='dark' : matchMedia('(prefers-color-scheme: dark)').matches; }
+function label(){ btn.textContent = isDark()?'Light mode':'Dark mode'; }
+btn.addEventListener('click',()=>{ document.documentElement.dataset.theme = isDark()?'light':'dark'; try{localStorage.setItem('theme',document.documentElement.dataset.theme);}catch(e){} label(); build(); });
+try{ const s=localStorage.getItem('theme'); if(s) document.documentElement.dataset.theme=s; }catch(e){}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{label();build();});
+label(); build();
+</script>
+</body>
+</html>
