@@ -50,7 +50,7 @@ section.card{background:var(--surface);border:1px solid var(--border);border-rad
 .takeaway{font-size:15px;margin:0 0 14px;padding:10px 12px;border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 8px 8px 0}
 .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;margin-bottom:10px}
 .seg{display:inline-flex;border:1px solid var(--border);border-radius:999px;padding:3px;background:var(--bg)}
-.seg button{font:inherit;font-size:13px;border:0;background:transparent;color:var(--text2);padding:5px 12px;border-radius:999px;cursor:pointer}
+.seg button{min-height:34px;font:inherit;font-size:13px;border:0;background:transparent;color:var(--text2);padding:5px 12px;border-radius:999px;cursor:pointer}
 .seg button[aria-pressed="true"]{background:var(--surface);color:var(--text);font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.12)}
 .chart{position:relative;height:300px}
 .detail{margin-top:12px;min-height:48px;font-size:14px;color:var(--text2);padding:10px 12px;border:1px dashed var(--border);border-radius:10px}
@@ -75,7 +75,8 @@ footer{margin-top:28px;font-size:13px;color:var(--muted)}
 .calct tr.net td{font-size:clamp(20px,4vw,26px);font-weight:700;border-top:3px double var(--text);border-bottom:0}
 .calct a{color:var(--accent-strong);font-weight:600;text-decoration:none}
 .pieWrap{display:grid;grid-template-columns:minmax(0,340px) 1fr;gap:28px;align-items:center}
-@media (max-width:700px){.pieWrap{grid-template-columns:1fr}.pieBox{max-width:300px;margin:0 auto}}
+@media (max-width:700px){.pieWrap{grid-template-columns:1fr}.pieBox{max-width:300px;margin:0 auto;width:100%}}
+@media (max-width:480px){.pieCenter{padding:24%}.pieCenter .ps{display:none}}
 .pieBox{position:relative;aspect-ratio:1}
 .pieCenter{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;pointer-events:none;padding:27%}
 .pieCenter .pv{font-size:clamp(22px,5vw,30px);font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.02em;line-height:1.1}
@@ -92,7 +93,8 @@ footer{margin-top:28px;font-size:13px;color:var(--muted)}
 .pieLegend .vl{font-weight:600;font-variant-numeric:tabular-nums;text-align:right}.pieLegend .vl small{display:block;color:var(--text2);font-weight:400;font-size:12px}
 @media (prefers-reduced-motion: reduce){.pieCenter.pop .pv{animation:none}.pieLegend li{transition:none}}
 .navlink{margin:12px 0 0}.navlink a,.detail a{color:var(--accent-strong);font-weight:600;text-decoration:none}.navlink a:hover,.detail a:hover{text-decoration:underline}
-.mini{width:100%;margin-top:10px;font-size:14px}.mini td{padding:5px 8px}
+.mini{width:100%;margin-top:10px;font-size:14px}
+@media (max-width:480px){.mini th:nth-child(3),.mini td:nth-child(3){display:none}}.mini td{padding:5px 8px}
 .rx{display:inline-block;background:#000;color:#fff;border-radius:2px;vertical-align:-2px;user-select:none}
 .rx.name{width:66px;height:15px;font-size:9px;line-height:15px;letter-spacing:.1em;text-align:center;font-weight:700;font-family:Inter,system-ui,sans-serif;margin-left:2px}
 .mini th:nth-child(2),.mini td:nth-child(2),.mini th:nth-child(3),.mini td:nth-child(3),#tx th:nth-child(2),#tx td:nth-child(2),#tx th:nth-child(3),#tx td:nth-child(3),#tx th:nth-child(4),#tx td:nth-child(4){text-align:left}
@@ -100,7 +102,8 @@ footer{margin-top:28px;font-size:13px;color:var(--muted)}
 :root[data-theme="dark"] .rx{outline:1px solid #555}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .rx{outline:1px solid #555}}
 .ph{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:nowrap}
-.theme{float:right;font:inherit;font-size:13px;background:var(--surface);color:var(--text2);border:1px solid var(--border);border-radius:999px;padding:5px 12px;cursor:pointer}
+button,select,input,summary{touch-action:manipulation}
+.theme{min-height:36px;float:right;font:inherit;font-size:13px;background:var(--surface);color:var(--text2);border:1px solid var(--border);border-radius:999px;padding:5px 12px;cursor:pointer}
 </style>
 </head>
 <body>
@@ -123,7 +126,7 @@ footer{margin-top:28px;font-size:13px;color:var(--muted)}
 
 <section class="card" id="pieCard">
   <h2>Which purchases brought in the money?</h2>
-  <p class="sub">Share of the takings by purchase size. Hover over a slice, or click it to pull it out and see the details.</p>
+  <p class="sub">Share of the takings by purchase size. Hover over a slice, or tap or click it to pull it out and see its details.</p>
   <div class="pieWrap">
     <div class="pieBox">
       <canvas id="pie" aria-label="Share of takings by purchase size"></canvas>
@@ -272,7 +275,7 @@ function buildPie(t){
   document.getElementById('pieLegend').innerHTML=PIE.map((s,i)=>`<li data-i="${i}" tabindex="0" role="button"><span class="sw" style="background:${cols[i]}"></span><span class="nm">${s.n}<small>${s.r} · ${s.count} payments</small></span><span class="vl">${pct(s.sum/TOTAL)}<small>${kr(s.sum)}</small></span></li>`).join('');
   pieChart=new Chart(document.getElementById('pie'),{type:'doughnut',
     data:{labels:PIE.map(s=>s.n),datasets:[{data:PIE.map(s=>s.sum),backgroundColor:cols.map((c,k)=>pieSel<0||k===pieSel?c:c+'55'),borderColor:t.surface,borderWidth:3,hoverOffset:14,offset:PIE.map((_,k)=>k===pieSel?26:0),borderRadius:6}]},
-    options:{cutout:'62%',layout:{padding:28},maintainAspectRatio:false,
+    options:{cutout:'64%',layout:{padding:innerWidth<480?16:28},maintainAspectRatio:false,
       animation:{animateRotate:true,animateScale:true,duration:matchMedia('(prefers-reduced-motion: reduce)').matches?0:1100,easing:'easeOutQuart'},
       transitions:{active:{animation:{duration:250}}},
       plugins:{legend:{display:false},tooltip:{enabled:false}},
@@ -305,6 +308,7 @@ function build(){
   // prices
   const tp = topAmts.slice(0,12).sort((a,b)=>a[0]-b[0]);
   const po = base(t,'Payments',v=>v);
+  po.scales.x.ticks={color:t.text2,autoSkip:false,maxRotation:0,font:{size:innerWidth<480?10:12}};
   po.plugins.tooltip.callbacks={title:i=>kr(tp[i[0].dataIndex][0]),label:i=>`${tp[i.dataIndex][1]} payments`};
   po.onClick=(e,els)=>{ if(!els.length) return; const k=els[0].index; sel.prices = sel.prices===k?-1:k; showPrice(tp); recolor(charts[1],sel.prices); };
   charts.push(new Chart(document.getElementById('prices'),{type:'bar',data:{labels:tp.map(p=>p[0]),datasets:[{data:tp.map(p=>p[1]),backgroundColor:colors(tp.length,sel.prices,t),...barStyle}]},options:po}));
